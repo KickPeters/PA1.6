@@ -18,9 +18,12 @@ class Environment:
             Returns the outside temperature in degrees Celsius.
         '''
         # --- Student code starts here ---
-        # Hint: Make sure you make the temperature sinusoidal and take into account the door event!
-        # Hint, use self.amplitude, self.period_s, self.door_start_s, self.door_duration_s, self.door_drop_C, self.base to make use of the values defined in the dataclass
-        
+        # Temperature follows a sinusoidal pattern with a temporary drop when the door is opened.
+        temp = self.base + self.amplitude * math.sin(2.0 * math.pi * t / self.period_s)
+
+        door_end_s = self.door_start_s + self.door_duration_s
+        if self.door_start_s <= t < door_end_s:
+            temp -= self.door_drop_C
+
+        return temp
         # --- Student code ends here ---
-        
-        return 0.0 # remove when code is added

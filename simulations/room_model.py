@@ -18,6 +18,31 @@ def step_room(T: float, heater_on: int, T_out: float, R: float, C: float, P: flo
     # --- Student code starts here ---
     # Hint: Use the Euler method to integrate the differential equation.
     # RC model: dT/dt = (T_out - T)/(R*C) + heater_on * P/C + noise
-    
+    dTdt = (T_out - T) / (R * C) + heater_on * P / C
+
+    if process_sigma != 0.0:
+        if rng is None:
+            import random
+            noise = random.gauss(0.0, process_sigma)
+        else:
+            noise = None
+            for attr in ("gauss", "gaussian", "normal", "randn"):
+                if hasattr(rng, attr):
+                    val = getattr(rng, attr)
+                    try:
+                        noise = val(0.0, process_sigma)
+                    except TypeError:
+                        try:
+                            noise = val(process_sigma)
+                        except TypeError:
+                            noise = val()
+                    break
+            if noise is None:
+                raise AttributeError(
+                    "RNG object does not provide a supported Gaussian random method."
+                )
+    else:
+        noise = 0.0
+
+    return T + (dTdt + noise) * dt
     # --- Student code ends here ---
-    return 0.0 # remove when code is added
